@@ -1,0 +1,90 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}C:\Users\HP\Downloads\Log file2.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}15 Sep 2023, 19:04:05
+
+{com}. keep if age > 16
+{txt}(135,141 observations deleted)
+
+{com}. tab empstat
+
+             {txt}employment status {c |}      Freq.     Percent        Cum.
+{hline 31}{c +}{hline 35}
+                  armed forces {c |}{res}      2,144        0.38        0.38
+{txt}                       at work {c |}{res}    315,210       56.41       56.79
+{txt}has job, not at work last week {c |}{res}     13,000        2.33       59.12
+{txt}unemployed, experienced worker {c |}{res}     10,410        1.86       60.98
+{txt}        unemployed, new worker {c |}{res}        805        0.14       61.13
+{txt}          nilf, unable to work {c |}{res}     27,826        4.98       66.11
+{txt}                   nilf, other {c |}{res}     58,693       10.50       76.61
+{txt}                 nilf, retired {c |}{res}    130,695       23.39      100.00
+{txt}{hline 31}{c +}{hline 35}
+                         Total {c |}{res}    558,783      100.00
+
+{com}. tab labforce
+
+        {txt}labor force status {c |}      Freq.     Percent        Cum.
+{hline 27}{c +}{hline 35}
+                       niu {c |}{res}      2,144        0.38        0.38
+{txt}no, not in the labor force {c |}{res}    217,214       38.87       39.26
+{txt}   yes, in the labor force {c |}{res}    339,425       60.74      100.00
+{txt}{hline 27}{c +}{hline 35}
+                     Total {c |}{res}    558,783      100.00
+
+{com}. tabulate empstat labforce
+
+                      {txt}{c |}  labor force status
+    employment status {c |}       niu  no, not i {c |}     Total
+{hline 22}{c +}{hline 22}{c +}{hline 10}
+         armed forces {c |}{res}     2,144          0 {txt}{c |}{res}     2,144 
+{txt}              at work {c |}{res}         0          0 {txt}{c |}{res}   315,210 
+{txt}has job, not at work  {c |}{res}         0          0 {txt}{c |}{res}    13,000 
+{txt}unemployed, experienc {c |}{res}         0          0 {txt}{c |}{res}    10,410 
+{txt}unemployed, new worke {c |}{res}         0          0 {txt}{c |}{res}       805 
+{txt} nilf, unable to work {c |}{res}         0     27,826 {txt}{c |}{res}    27,826 
+{txt}          nilf, other {c |}{res}         0     58,693 {txt}{c |}{res}    58,693 
+{txt}        nilf, retired {c |}{res}         0    130,695 {txt}{c |}{res}   130,695 
+{txt}{hline 22}{c +}{hline 22}{c +}{hline 10}
+                Total {c |}{res}     2,144    217,214 {txt}{c |}{res}   558,783 
+
+
+                      {txt}{c |}   labor
+                      {c |}   force
+                      {c |}   status
+    employment status {c |} yes, in t {c |}     Total
+{hline 22}{c +}{hline 11}{c +}{hline 10}
+         armed forces {c |}{res}         0 {txt}{c |}{res}     2,144 
+{txt}              at work {c |}{res}   315,210 {txt}{c |}{res}   315,210 
+{txt}has job, not at work  {c |}{res}    13,000 {txt}{c |}{res}    13,000 
+{txt}unemployed, experienc {c |}{res}    10,410 {txt}{c |}{res}    10,410 
+{txt}unemployed, new worke {c |}{res}       805 {txt}{c |}{res}       805 
+{txt} nilf, unable to work {c |}{res}         0 {txt}{c |}{res}    27,826 
+{txt}          nilf, other {c |}{res}         0 {txt}{c |}{res}    58,693 
+{txt}        nilf, retired {c |}{res}         0 {txt}{c |}{res}   130,695 
+{txt}{hline 22}{c +}{hline 11}{c +}{hline 10}
+                Total {c |}{res}   339,425 {txt}{c |}{res}   558,783 
+
+
+{com}. gen unemp = (empstat == 20) | (empstat == 21) | (empstat == 22)
+
+. keep if unemp == 1 & labforce == 2
+{txt}(547,568 observations deleted)
+
+{com}. egen WeightedUnemployed = total(wtfinl*unemp), by(month)
+
+. egen TotalWeightedLaborForce = total(wtfinl*age) if labforce == 2, by(month)
+
+. gen weighted_unemp_rate = (WeightedUnemployed / TotalWeightedLaborForce) * 100
+
+. twoway line weighted_unemp_rate month, title("Monthly Weighted Unemployment Rate") xtitle("Month") ytitle("Weighted Unemployment Rate (%)") xlabel(1(1)12) legend(off)
+{res}
+{com}. log close
+      {txt}name:  {res}<unnamed>
+       {txt}log:  {res}C:\Users\HP\Downloads\Log file2.smcl
+  {txt}log type:  {res}smcl
+ {txt}closed on:  {res}15 Sep 2023, 19:07:50
+{txt}{.-}
+{smcl}
+{txt}{sf}{ul off}
